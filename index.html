@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LLM Test Frontend</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 8px 15px; }
+        #response { margin-top: 20px; white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Sup, dawg! Query Gemma2!</h1>
+    <input type="text" id="promptInput" placeholder="Ask Gemma 2 anything...">
+    <button onclick="sendPrompt()">Send</button>
+    <div id="response">The model's response will appear here...</div>
+
+    <script>
+        async function sendPrompt() {
+            const input = document.getElementById('promptInput');
+            const responseDiv = document.getElementById('response');
+            const userPrompt = input.value;
+
+            if (!userPrompt) return;
+
+
+            //reset input field after submission
+            input.value = '';
+            responseDiv.textContent = 'Thinking...';
+
+            try {
+                // This sends the request to your Node.js backend
+                const response = await fetch('http://localhost:3000/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: userPrompt })
+                });
+
+                const data = await response.json();
+
+                if (data.response) {
+                    responseDiv.textContent = data.response;
+                } else {
+                    responseDiv.textContent = 'Error: ' + (data.error || 'Unknown error');
+                }
+
+            } catch (error) {
+                responseDiv.textContent = 'Failed to connect to the backend server.';
+                console.error('Fetch error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
