@@ -33,7 +33,7 @@
 </head>
 
 <body>
-    <h1>Sup, dawg! Query Gemma2!</h1>
+    <h1>Good Day. Query Gemma2!</h1>
     <input type="text" id="promptInput" placeholder="Ask Gemma 2 anything...">
     <button onclick="sendPrompt()">Send</button>
     <div id="response">The model's response will appear here...</div>
@@ -43,34 +43,25 @@
             const input = document.getElementById('promptInput');
             const responseDiv = document.getElementById('response');
             const userPrompt = input.value;
-
             if (!userPrompt) return;
-
-            //reset input field after submission
             input.value = '';
             responseDiv.textContent = 'Thinking...';
-
             try {
                 const response = await fetch('https://mammal-capable-really.ngrok-free.app/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': 'true',
-                        // This is where the magic happens. The key is included automatically.
                         'X-API-KEY': "a-very-hard-to-guess-string-123!@#"
                     },
                     body: JSON.stringify({ prompt: userPrompt })
                 });
-
                 const data = await response.json();
-
-                // This will now correctly handle the 401 Unauthorized error too
                 if (response.ok) {
                     responseDiv.textContent = data.response;
                 } else {
                     responseDiv.textContent = 'Error: ' + (data.error || 'Unknown error');
                 }
-
             } catch (error) {
                 responseDiv.textContent = 'Failed to connect to the backend server.';
                 console.error('Fetch error:', error);
@@ -78,5 +69,4 @@
         }
     </script>
 </body>
-
 </html>
