@@ -1,15 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>LLM Test Frontend</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-        input { width: 100%; padding: 8px; margin-bottom: 10px; }
-        button { padding: 8px 15px; }
-        #response { margin-top: 20px; white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; }
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+        }
+
+        #response {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
+
 <body>
     <h1>Sup, dawg! Query Gemma2!</h1>
     <input type="text" id="promptInput" placeholder="Ask Gemma 2 anything...">
@@ -29,20 +51,21 @@
             responseDiv.textContent = 'Thinking...';
 
             try {
-                // This sends the request to your Node.js backend
                 const response = await fetch('https://mammal-capable-really.ngrok-free.app/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        // ADD THIS LINE TO BYPASS NGROK WARNING PAGE
-                        'ngrok-skip-browser-warning': 'true' 
+                        'ngrok-skip-browser-warning': 'true',
+                        // This is where the magic happens. The key is included automatically.
+                        'X-API-KEY': 'a-very-hard-to-guess-string-123!@#'
                     },
                     body: JSON.stringify({ prompt: userPrompt })
                 });
 
                 const data = await response.json();
 
-                if (data.response) {
+                // This will now correctly handle the 401 Unauthorized error too
+                if (response.ok) {
                     responseDiv.textContent = data.response;
                 } else {
                     responseDiv.textContent = 'Error: ' + (data.error || 'Unknown error');
@@ -55,4 +78,5 @@
         }
     </script>
 </body>
+
 </html>
